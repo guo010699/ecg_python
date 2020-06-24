@@ -38,25 +38,34 @@ class HolterSystem_Signal(object):
     def read_ecg(self, ecg_path, NUM):
         """读取ecg文件，NUM代表第几导联"""
         ecg_file = open(ecg_path, "rb").read()
+        ecg_head = ecg_file[:64]
         ecg_file = ecg_file[64:]
-        data_len = int(len(ecg_file) / 8)
-        if NUM =="0": #I
-            num=0
-        if NUM =="1": #II
-            num=1
-        if NUM =="6":#V1
+        if NUM == "0":  # I
+            num = 0
+        if NUM == "1":  # II
+            num = 1
+        if NUM == "6":  # V1
             num = 2
-        if NUM =="7":#V2
+        if NUM == "7":  # V2
             num = 3
-        if NUM =="8":#V3
+        if NUM == "8":  # V3
             num = 4
-        if NUM =="9":#V4
+        if NUM == "9":  # V4
             num = 5
-        if NUM =="10":#V5
+        if NUM == "10":  # V5
             num = 6
-        if NUM =="11":#V6
+        if NUM == "11":  # V6
             num = 7
-        ecg_signal = [ecg_file[num+8*i] for i in range(data_len)]
+        if ecg_head[15] == 3:
+            data_len = int(len(ecg_file) / 8)
+            ecg_signal = [ecg_file[num + 8 * i] for i in range(data_len)]
+        if ecg_head[15] == 1:
+            data_len = int(len(ecg_file) / 16)
+            ecg_signal = [int.from_bytes(ecg_file[num + 16 * i:num + 16 * i + 2], 'little', signed=True) for i in
+                          range(data_len)]
+            leve = 3450 / 24.1
+            ecg_signal = [i / (leve) + 128 for i in ecg_signal]
+            
         return ecg_signal
 
     def ecg_filter(self,ecg_signal):
