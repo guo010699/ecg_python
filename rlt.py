@@ -65,7 +65,7 @@ class HolterSystem_Signal(object):
                           range(data_len)]
             leve = 3450 / 24.1
             ecg_signal = [i / (leve) + 128 for i in ecg_signal]
-            
+
         return ecg_signal
 
     def ecg_filter(self,ecg_signal):
