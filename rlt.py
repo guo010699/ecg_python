@@ -61,7 +61,7 @@ class HolterSystem_Signal(object):
             ecg_signal = [ecg_file[num + 8 * i] for i in range(data_len)]
         if ecg_head[15] == 1:
             data_len = int(len(ecg_file) / 16)
-            ecg_signal = [int.from_bytes(ecg_file[num + 16 * i:num + 16 * i + 2], 'little', signed=True) for i in
+            ecg_signal = [int.from_bytes(ecg_file[num*2 + 16 * i:num*2 + 16 * i + 2], 'little', signed=True) for i in
                           range(data_len)]
             leve = 3450 / 24.1
             ecg_signal = [i / (leve) + 128 for i in ecg_signal]
